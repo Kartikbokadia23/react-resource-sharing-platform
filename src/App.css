@@ -1,38 +1,323 @@
-.App {
+.header {
+  display: flex;
+  padding: 10px 10px 10px 10px;
+  background: white;
+  align-items: center;
+  height: 80px;
+  justify-content: space-between;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.user_wrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.header_user {
+  display: flex;
+  align-items: center;
+  padding: 5px 5px 5px 20px;
+  background-color: #5fbec7;
+  border-radius: 10px;
+  box-shadow: 0px 1px 7px 0px #5fbec7;
+  margin-left: 20px;
+}
+
+.header_user > img {
+  margin-left: 15px;
+  width: 70px;
+}
+
+.header_action {
+  display: flex;
+  align-items: center;
+  flex: 2;
+  justify-content: flex-end;
+}
+
+.user_avatar {
+  margin-right: 15px;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px #5fbec7;
+}
+
+.logout_button:hover {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+.sidebar {
+  position: fixed;
+  left: 0px;
+  background: white;
+  height: 100%;
+  width: 80px;
+  transition: 0.2s ease;
+  padding-top: 100px;
+  z-index: 100;
+}
+
+.sidebar.hide {
+  left: -80px;
+}
+
+.sidebar.show {
+  left: 0px;
+}
+
+.sidebar_main {
+  position: relative;
+  height: 100%;
+}
+
+.sidebar_items {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.sidebar_item {
+  position: relative;
+  padding: 8px;
+  margin-bottom: 15px;
+  box-shadow: 1px 1px 4px 0px #5fbec7;
+  border-radius: 10px;
+  transition: 0.3s ease;
+}
+
+.category_icon {
+  font-size: 25px;
+}
+
+.sidebar_item:hover > span {
+  display: block;
+}
+
+.sidebar_item > span {
+  position: absolute;
+  top: 50%;
+  left: 135%;
+  display: none;
+  margin-bottom: 2em;
+  padding: 0.5em;
+  background-color: #ffffff;
+  font-size: 1em;
+  border-radius: 5px;
   text-align: center;
+  white-space: nowrap;
+  transition: all 0.15s ease-in-out;
+  transform: translateY(-50%);
+  box-shadow: 0px 0px 16px 0px #5fbec7;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.sidebar_item > span::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  margin-top: -7px;
+  border-width: 7px;
+  border-style: solid;
+  border-color: transparent rgb(255, 255, 255) transparent transparent;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.sidebar_item:hover {
+  transform: scale(1.1);
+  box-shadow: inset 0px 0px 7px 0px #5fbec7;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.toggle {
+  position: absolute;
+  background: white;
+  padding: 15px 10px 15px 10px;
+  border-radius: 0% 100% 100% 0%;
+  top: 50%;
+  transform: translateY(calc(-50% - 80px));
+  left: 90%;
+  cursor: pointer;
+}
+
+.main {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 20px;
+  padding: 100px 130px;
+}
+
+.post_upload {
+  display: flex;
+  align-items: center;
+  width: 40%;
+  justify-content: space-around;
+  background: white;
+  padding: 20px 0px 20px 0px;
+  border-radius: 15px;
+}
+
+.post_upload > textarea {
+  resize: none;
+  width: 60%;
+  border: none;
+  outline: none;
+  padding: 10px;
+  background: #ebf6f7;
+  border-radius: 10px;
+  transition: all 0.3s;
+}
+
+.post_upload > textarea:active,
+.post_upload > textarea:focus,
+.post_upload > textarea:hover {
+  box-shadow: 0px 1px 4px 2px #bad9dc;
+}
+
+.post_upload > button {
+  height: 75px;
+  width: 75px;
+  border: 2px solid #5fbec7;
+  border-radius: 100px;
+  position: relative;
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  overflow: hidden;
+  background-image: linear-gradient(to bottom, #5fbec7 50%, #ffffff 50%);
+  background-size: 100% 200%;
+  transition: all 0.3s;
+  color: #ffffff;
+  font-size: 30px;
+  cursor: pointer;
+  outline: none;
 }
 
-.App-link {
-  color: #61dafb;
+.post_upload > button:hover {
+  background-position: 0 -100%;
+  color: #5fbec7;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.post_container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 30px;
+  width: 100%;
+}
+
+.post_card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 280px;
+  width: 320px;
+  border-radius: 10px;
+  background: white;
+  margin: 0px 10px 30px 10px;
+  transition: box-shadow 0.3s ease-out, transform 0.3s ease-out,
+    opacity 0.2s ease-out;
+  position: relative;
+}
+
+.post_card:hover {
+  box-shadow: rgb(45 45 45 / 5%) 0px 2px 2px, rgb(49 49 49 / 5%) 0px 4px 4px,
+    rgb(42 42 42 / 5%) 0px 8px 8px, rgb(32 32 32 / 5%) 0px 16px 16px,
+    rgb(49 49 49 / 5%) 0px 32px 32px, rgb(35 35 35 / 5%) 0px 64px 64px;
+  transform: translate(0, -4px);
+  cursor: pointer;
+}
+
+.user_post_avatar {
+  border: 5px solid #fff;
+  position: absolute !important;
+  top: 0;
+  right: 0;
+  transform: translate(25%, -25%);
+}
+
+@media (max-width: 768px) {
+  .header {
+    height: 50px;
   }
-  to {
-    transform: rotate(360deg);
+  .header_user {
+    display: flex;
+    align-items: center;
+    padding: 5px 5px 5px 20px;
+    font-size: 10px;
+    margin-left: 20px;
+  }
+
+  .header_user > img {
+    margin-left: 15px;
+    width: 50px;
+  }
+
+  .user_avatar {
+    margin-right: 10px;
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 1rem !important;
+  }
+
+  .brand > img {
+    width: 35px;
+  }
+
+  .sidebar {
+    width: 60px;
+  }
+  .sidebar.hide {
+    left: -60px;
+  }
+  .category_icon {
+    font-size: 15px;
+  }
+
+  .toggle {
+    padding: 5px 5px 5px 5px;
+  }
+
+  .main {
+    padding: 70px 70px;
+  }
+
+  .post_upload {
+    width: 70%;
+    padding: 5px 5px 5px 5px;
+    flex-direction: column;
+  }
+
+  .post_upload > textarea {
+    height: 50px;
+    margin-bottom: 5px;
+    width: 90%;
+  }
+
+  .post_upload > button {
+    height: 50px;
+    width: 50px;
+    font-size: 25px;
+  }
+
+  .post_card {
+    width: 190px;
+    height: 180px;
+  }
+}
+
+@media (max-width: 408px) {
+  .post_upload {
+    width: 100%;
+  }
+  .post_card {
+    margin: 0px 0px 30px 0px;
   }
 }
