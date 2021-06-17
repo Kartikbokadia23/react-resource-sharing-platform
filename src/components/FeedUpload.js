@@ -1,16 +1,18 @@
 import React, { useState } from "react";
-import Post from "./PostComponent";
+import Post from "components/Post";
 import { BsBoxArrowUp } from "react-icons/bs";
 
 function Upload() {
-  const [posts, setPosts] = useState([]);
+  const [feeds, setFeeds] = useState([]);
   const [feed, setFeed] = useState("");
 
   const handleUpload = (e) => {
     e.preventDefault();
-    setPosts((prevValue) => [...prevValue, { feed: feed }]);
+
+    setFeeds((prevValue) => [...prevValue, { feed: feed }]);
     setFeed("");
   };
+
   return (
     <React.Fragment>
       <div className="post_upload">
@@ -20,13 +22,13 @@ function Upload() {
           placeholder="Something on mind ..."
           onChange={(event) => setFeed(event.target.value)}
         ></textarea>
-        <button onClick={handleUpload}>
+        <button onClick={handleUpload} disabled={feed.length<1}>
           <BsBoxArrowUp className="upload_button" />
         </button>
       </div>
       <div className="post_container">
-        {posts.map((post) => (
-          <Post feed={post.feed} />
+        {feeds.map((item) => (
+          <Post feed={item.feed} />
         ))}
       </div>
     </React.Fragment>
