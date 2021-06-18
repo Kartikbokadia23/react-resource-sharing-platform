@@ -7,12 +7,12 @@ import {AuthContext} from "components/UserContext";
 
 function App() {
   const currentUser = useContext(AuthContext)
+  console.log(currentUser,"app")
   return (
     <Switch>
       <Route path='/userAuth' render={() => ( !currentUser ? <UserAuthentication /> : <Redirect to='/home' /> )}/>
       <Route path='/home' render={() => ( currentUser ? <Main /> : <Redirect to='/userAuth' /> )}/>
-      <Route path='/home' component={Main} />
-      <Route path='/userAuth' component={UserAuthentication} />
+      <Redirect to="/userAuth" />
     </Switch>
   );
 }

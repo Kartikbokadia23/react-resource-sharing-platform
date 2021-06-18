@@ -9,9 +9,11 @@ export function UserContext(props) {
         auth.onAuthStateChanged((authUser) => {
           if (authUser) {
             setCurrentUser(authUser)
+            console.log("login")
           }
           else {
             setCurrentUser(null)
+            console.log("logout")
           }
         })
       })

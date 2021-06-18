@@ -22,7 +22,7 @@ function Upload() {
           placeholder="Something on mind ..."
           onChange={(event) => setFeed(event.target.value)}
         ></textarea>
-        <button onClick={handleUpload} disabled={feed.length<1}>
+        <button onClick={handleUpload} disabled={feed.trim().length<1}>
           <BsBoxArrowUp className="upload_button" />
         </button>
       </div>

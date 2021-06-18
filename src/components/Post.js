@@ -1,5 +1,6 @@
 import React from "react";
 import Avatar from "@material-ui/core/Avatar";
+import PropTypes from "prop-types"
 
 function Post({ feed }) {
   return (
@@ -12,6 +13,10 @@ function Post({ feed }) {
       <h3>{feed}</h3>
     </div>
   );
+}
+
+Post.propTypes={
+  feed: PropTypes.string
 }
 
 export default Post;
