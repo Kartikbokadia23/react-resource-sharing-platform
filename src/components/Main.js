@@ -1,7 +1,8 @@
 import React from "react";
+
 import Header from "components/Header";
 import Sidebar from "components/SideBar";
-import Upload from "components/FeedUpload";
+import FeedUpload from "components/FeedUpload";
 
 function Main() {
   return (
@@ -9,7 +10,7 @@ function Main() {
       <Header />
       <Sidebar />
       <div className="main">
-        <Upload />
+        <FeedUpload />
       </div>
     </React.Fragment>
   );

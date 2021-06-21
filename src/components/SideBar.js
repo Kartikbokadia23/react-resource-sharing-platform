@@ -8,7 +8,6 @@ import { ImFilePicture } from "react-icons/im";
 import { BiMessageRounded } from "react-icons/bi";
 
 function SideBar() {
-
   const [sidebarexpanded, setSidebarExpanded] = useState(true);
 
   const handleToggle = () => {
@@ -19,11 +18,7 @@ function SideBar() {
     <div className={`sidebar ${sidebarexpanded ? "show" : "hide"}`}>
       <div className="sidebar_main">
         <div className="toggle" onClick={handleToggle}>
-          {sidebarexpanded ? (
-            <ArrowForwardIosRoundedIcon />
-          ) : (
-            <ArrowBackIosRoundedIcon />
-          )}
+          {sidebarexpanded ? <ArrowForwardIosRoundedIcon /> : <ArrowBackIosRoundedIcon />}
         </div>
         <ul className="sidebar_items">
           <li className="sidebar_item">

@@ -1,15 +1,39 @@
-import React, { useState } from "react";
-import Post from "components/Post";
+import React, { useState, useContext, useEffect } from "react";
 import { BsBoxArrowUp } from "react-icons/bs";
+import firebase from "firebase";
 
-function Upload() {
+import { AuthContext } from "components/UserContext";
+import Post from "components/Post";
+import { db } from "firebase/AppFirebase";
+
+function FeedUpload() {
+  const currentUser = useContext(AuthContext);
   const [feeds, setFeeds] = useState([]);
   const [feed, setFeed] = useState("");
+
+  useEffect(() => {
+    db.collection("feeds")
+      .orderBy("timestamp", "desc")
+      .onSnapshot((snapshot) => {
+        setFeeds(
+          snapshot.docs.map((doc) => ({
+            feed: doc.data(),
+            id: doc.id,
+          }))
+        );
+      });
+  }, []);
 
   const handleUpload = (e) => {
     e.preventDefault();
 
-    setFeeds((prevValue) => [...prevValue, { feed: feed }]);
+    db.collection("feeds").add({
+      feed: feed,
+      user_name: currentUser.displayName,
+      user_id: currentUser.uid,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    })
+
     setFeed("");
   };
 
@@ -20,19 +44,18 @@ function Upload() {
           value={feed}
           rows="7"
           placeholder="Something on mind ..."
-          onChange={(event) => setFeed(event.target.value)}
-        ></textarea>
-        <button onClick={handleUpload} disabled={feed.trim().length<1}>
+          onChange={(event) => setFeed(event.target.value)}></textarea>
+        <button onClick={handleUpload} disabled={feed.trim().length < 1}>
           <BsBoxArrowUp className="upload_button" />
         </button>
       </div>
       <div className="post_container">
-        {feeds.map((item) => (
-          <Post feed={item.feed} />
+        {feeds.map(({ feed, id }) => (
+          <Post key={id} feed={feed.feed} userName={feed.user_name} />
         ))}
       </div>
     </React.Fragment>
   );
 }
 
-export default Upload;
+export default FeedUpload;

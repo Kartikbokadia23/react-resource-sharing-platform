@@ -1,13 +1,14 @@
 import "./App.css";
-import Main from "components/Main";
 import React , {useContext} from 'react'
-import UserAuthentication from 'components/UserAuthentication';
 import {Switch, Route, withRouter, Redirect} from 'react-router-dom';
+
+import Main from "components/Main";
 import {AuthContext} from "components/UserContext";
+import UserAuthentication from 'components/UserAuthentication';
 
 function App() {
+  
   const currentUser = useContext(AuthContext)
-  console.log(currentUser,"app")
   return (
     <Switch>
       <Route path='/userAuth' render={() => ( !currentUser ? <UserAuthentication /> : <Redirect to='/home' /> )}/>
