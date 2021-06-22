@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
+import {useHistory} from 'react-router-dom'
 
+import {AuthContext} from 'components/UserContext'
 import { auth } from "firebase/AppFirebase";
 
 function Alert(props) {
@@ -9,6 +11,8 @@ function Alert(props) {
 }
 
 function UserAuthentication() {
+    const currentUser = useContext(AuthContext)
+    const history = useHistory();
   const [signin, setSignIn] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,6 +20,12 @@ function UserAuthentication() {
   const [loader, setLoader] = useState(false);
   const [error, setError] = useState("");
   const [open, setOpen] = useState(false);
+
+    useEffect(()=>{
+        if(currentUser){
+            history.push('/home');
+        }
+    })
 
   const toggleSignIn = (toggle) => {
     setSignIn(toggle);
@@ -29,6 +39,9 @@ function UserAuthentication() {
     e.preventDefault();
     auth
       .signInWithEmailAndPassword(email, password)
+      .then(()=>{
+          history.push('/home');
+      })
       .catch((error) => {
         setError(error.message);
         setOpen(true);
@@ -41,6 +54,13 @@ function UserAuthentication() {
   const signUp = (e) => {
     setLoader(true);
     e.preventDefault();
+    var emailRegex = /@gkmit.co$/
+    if(!emailRegex.test(email)){
+        setError("Email is Incorrect")
+        setOpen(true);
+        setLoader(false)
+        return;
+    }
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((authUser) => {
@@ -49,7 +69,7 @@ function UserAuthentication() {
         });
       })
       .then(()=>{
-        window.location.reload();
+        history.push('/home');
       })
       .catch((error) => {
         setError(error.message);

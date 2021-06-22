@@ -1,12 +1,14 @@
 import React, { useState, useContext, useEffect } from "react";
 import { BsBoxArrowUp } from "react-icons/bs";
 import firebase from "firebase";
+import { useHistory } from "react-router-dom";
 
 import { AuthContext } from "components/UserContext";
 import Post from "components/Post";
 import { db } from "firebase/AppFirebase";
 
 function FeedUpload() {
+  const history = useHistory();
   const currentUser = useContext(AuthContext);
   const [feeds, setFeeds] = useState([]);
   const [feed, setFeed] = useState("");
@@ -14,25 +16,38 @@ function FeedUpload() {
   useEffect(() => {
     db.collection("feeds")
       .orderBy("timestamp", "desc")
-      .onSnapshot((snapshot) => {
-        setFeeds(
-          snapshot.docs.map((doc) => ({
-            feed: doc.data(),
-            id: doc.id,
-          }))
-        );
-      });
-  }, []);
+      .onSnapshot(
+        (snapshot) => {
+          setFeeds(
+            snapshot.docs.map((doc) => ({
+              feed: doc.data(),
+              id: doc.id,
+            }))
+          );
+        },
+        (error) => {
+          if (!window.location.href.includes('/userAuth')) {
+            history.push("/unauthorized");
+          }
+        }
+      );
+  });
 
   const handleUpload = (e) => {
     e.preventDefault();
 
-    db.collection("feeds").add({
-      feed: feed,
-      user_name: currentUser.displayName,
-      user_id: currentUser.uid,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    })
+    db.collection("feeds")
+      .add({
+        feed: feed,
+        user_name: currentUser.displayName,
+        user_id: currentUser.uid,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+      .catch((error) => {
+        if (!window.location.href.includes('/userAuth')) {
+          history.push("/unauthorized");
+        }
+      });
 
     setFeed("");
   };
