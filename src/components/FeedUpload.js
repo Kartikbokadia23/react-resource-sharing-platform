@@ -10,6 +10,7 @@ import { db } from "firebase/AppFirebase";
 function FeedUpload() {
   const history = useHistory();
   const currentUser = useContext(AuthContext);
+
   const [feeds, setFeeds] = useState([]);
   const [feed, setFeed] = useState("");
 

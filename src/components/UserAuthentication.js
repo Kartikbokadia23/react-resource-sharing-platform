@@ -1,82 +1,37 @@
 import React, { useState, useEffect, useContext } from "react";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-import {useHistory} from 'react-router-dom'
+import { useHistory } from "react-router-dom";
 
-import {AuthContext} from 'components/UserContext'
-import { auth } from "firebase/AppFirebase";
+import { AuthContext } from "components/UserContext";
+import { auth, provider } from "firebase/AppFirebase";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
 function UserAuthentication() {
-    const currentUser = useContext(AuthContext)
-    const history = useHistory();
-  const [signin, setSignIn] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
-  const [loader, setLoader] = useState(false);
+  const currentUser = useContext(AuthContext);
+  const history = useHistory();
+
   const [error, setError] = useState("");
   const [open, setOpen] = useState(false);
 
-    useEffect(()=>{
-        if(currentUser){
-            history.push('/home');
-        }
-    })
-
-  const toggleSignIn = (toggle) => {
-    setSignIn(toggle);
-    setPassword("");
-    setUsername("");
-    setEmail("");
-  };
-
-  const signIn = (e) => {
-    setLoader(true);
-    e.preventDefault();
-    auth
-      .signInWithEmailAndPassword(email, password)
-      .then(()=>{
-          history.push('/home');
-      })
-      .catch((error) => {
-        setError(error.message);
-        setOpen(true);
-      })
-      .finally(() => {
-        setLoader(false);
-      });
-  };
-
-  const signUp = (e) => {
-    setLoader(true);
-    e.preventDefault();
-    var emailRegex = /@gkmit.co$/
-    if(!emailRegex.test(email)){
-        setError("Email is Incorrect")
-        setOpen(true);
-        setLoader(false)
-        return;
+  useEffect(() => {
+    if (currentUser) {
+      history.push("/home");
     }
+  });
+  const signIn = (e) => {
+    e.preventDefault();
+    provider.setCustomParameters({
+      hd: "gkmit.co",
+    });
     auth
-      .createUserWithEmailAndPassword(email, password)
-      .then((authUser) => {
-        return authUser.user.updateProfile({
-          displayName: username.charAt(0).toUpperCase() + username.slice(1),
-        });
-      })
-      .then(()=>{
-        history.push('/home');
-      })
+      .signInWithPopup(provider)
       .catch((error) => {
         setError(error.message);
         setOpen(true);
-      })
-      .finally(() => {
-        setLoader(false);
       });
   };
 
@@ -98,56 +53,23 @@ function UserAuthentication() {
         </Alert>
       </Snackbar>
       <div className="brand_div">
-        <img src="https://avatars.githubusercontent.com/u/5553065?s=200&v=4" alt="brand_image" width="120px"></img>
+        <img
+          src="https://avatars.githubusercontent.com/u/5553065?s=200&v=4"
+          alt="brand_image"
+          width="120px"></img>
       </div>
       <div className="form_div">
-        <div className="form_tab">
-          <button
-            className={`login_button ${signin ? "active" : "inactive"}`}
-            onClick={()=>toggleSignIn(true)}>
-            Login
-          </button>
-          <button
-            className={`signup_button ${signin ? "inactive" : "active"}`}
-            onClick={()=>toggleSignIn(false)}>
-            Sign Up
-          </button>
-        </div>
         <div className="form">
-          {signin ? (
-            <form className="app_signup">
-              <input
-                type="email"
-                placeholder="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}></input>
-              <input
-                type="password"
-                placeholder="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}></input>
-              <button onClick={signIn}>{loader ? "Signing In ..." : "Sign In"}</button>
-            </form>
-          ) : (
-            <form className="app_signup">
-              <input
-                type="text"
-                placeholder="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}></input>
-              <input
-                type="email"
-                placeholder="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}></input>
-              <input
-                type="password"
-                placeholder="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}></input>
-              <button onClick={signUp}>{loader ? "Signing Up ..." : "Sign Up"}</button>
-            </form>
-          )}
+          <form className="app_signup">
+            <button className="google_login" onClick={signIn}>
+              {" "}
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+                alt="logo"
+              />
+              Login With Google
+            </button>
+          </form>
         </div>
       </div>
     </div>
