@@ -2,7 +2,7 @@ import "./App.css";
 import React from 'react'
 import {Switch, Route, withRouter, Redirect} from 'react-router-dom';
 
-import Main from "components/Main";
+import Main from "views/Main";
 import UserAuthentication from 'components/UserAuthentication';
 import UnAuthorized from "components/UnAuthorized";
 

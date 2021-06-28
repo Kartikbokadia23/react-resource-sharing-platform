@@ -1,74 +1,120 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useContext, useEffect, useReducer } from "react";
 import { BsBoxArrowUp } from "react-icons/bs";
 import firebase from "firebase";
 import { useHistory } from "react-router-dom";
 
+import { isValidUrl, previewUrl } from "utility/Utils.js";
 import { AuthContext } from "components/UserContext";
-import Post from "components/Post";
 import { db } from "firebase/AppFirebase";
+
+const initialState = {
+  title: "",
+  description: "",
+  image: "",
+  type: "",
+  message: "",
+  domain: "",
+  favicon: "",
+  url: ""
+};
+
+function reducer(state, action) {
+  switch(action.type){
+    case "UPDATE_STATE":{
+      return{...state, [action.stateName]: action.payload}
+    }
+
+    case "INITIAL_STATE":{
+      return{...state, title:"", image:"", description:"", type:"", domain:"",favicon:""}
+    }
+    default:
+      return state
+  }
+}
+
+
 
 function FeedUpload() {
   const history = useHistory();
   const currentUser = useContext(AuthContext);
 
-  const [feeds, setFeeds] = useState([]);
-  const [feed, setFeed] = useState("");
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { title, description, image, type, message, domain, favicon, url } = state;
 
   useEffect(() => {
-    db.collection("feeds")
-      .orderBy("timestamp", "desc")
-      .onSnapshot(
-        (snapshot) => {
-          setFeeds(
-            snapshot.docs.map((doc) => ({
-              feed: doc.data(),
-              id: doc.id,
-            }))
-          );
-        },
-        (error) => {
-          if (!window.location.href.includes('/userAuth')) {
-            history.push("/unauthorized");
-          }
-        }
-      );
-  });
+    dispatch({type:"INITIAL_STATE"})
+    if (isValidUrl(url)) {
+      console.log("valid");
+      previewUrl(url).then(({ title, description, image, type, domain, favicon }) => {
+        title && dispatch({type:"UPDATE_STATE", stateName: "title", payload:title});
+        description && dispatch({type:"UPDATE_STATE", stateName: "description", payload:description});
+        image && dispatch({type:"UPDATE_STATE", stateName: "image", payload:image});
+        type && dispatch({type:"UPDATE_STATE", stateName: "type", payload:type})
+        domain && dispatch({type:"UPDATE_STATE", stateName: "domain", payload:domain})
+        favicon && dispatch({type:"UPDATE_STATE", stateName: "favicon", payload:favicon})
+      });
+    } else {
+      return;
+    }
+  }, [url]);
 
   const handleUpload = (e) => {
-    e.preventDefault();
-
     db.collection("feeds")
-      .add({
-        feed: feed,
-        user_name: currentUser.displayName,
-        user_id: currentUser.uid,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      })
-      .catch((error) => {
-        if (!window.location.href.includes('/userAuth')) {
-          history.push("/unauthorized");
-        }
-      });
+    .add({
+      url_content_type: type,
+      url_domain: domain,
+      url_logo: favicon,
+      url_description: description,
+      url_image: image,
+      url_title: title,
+      user_message: message,
+      user_name: currentUser.displayName,
+      user_id: currentUser.uid,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    })
+    .catch((error) => {
+      if (!window.location.href.includes('/userAuth')) {
+        history.push("/unauthorized");
+      }
+    });
+    dispatch({type:"UPDATE_STATE",stateName: "message", payload:""})
+    dispatch({type:"UPDATE_STATE",stateName: "url", payload:""})
 
-    setFeed("");
   };
 
   return (
     <React.Fragment>
       <div className="post_upload">
-        <textarea
-          value={feed}
-          rows="7"
-          placeholder="Something on mind ..."
-          onChange={(event) => setFeed(event.target.value)}></textarea>
-        <button onClick={handleUpload} disabled={feed.trim().length < 1}>
+        <div className="user_input">
+          <textarea
+            value={url}
+            rows="3"
+            placeholder="Paste the resource url"
+            onChange={(event) => dispatch({type:"UPDATE_STATE",stateName: "url", payload:event.target.value})}></textarea>
+            <br/>
+          <textarea
+            value={message}
+            rows="3"
+            placeholder="Something on mind ..."
+            onChange={(event) => dispatch({type:"UPDATE_STATE",stateName: "message", payload:event.target.value})}></textarea>
+        </div>
+        <button onClick={handleUpload} disabled={url.trim().length < 1}>
           <BsBoxArrowUp className="upload_button" />
         </button>
       </div>
-      <div className="post_container">
-        {feeds.map(({ feed, id }) => (
-          <Post key={id} feed={feed.feed} userName={feed.user_name} />
-        ))}
+      <div className={`url_preview_container ${title ? "show" : "hide"}`}>
+        {title ? (
+          <div className="url_preview">
+            <div className="url_image">
+              <img src={image}></img>
+            </div>
+            <div className="url_description">
+              <span><img src={favicon} height="32" width="32"></img>&nbsp;{domain}</span>
+              <h4>{title}</h4>
+              <p>{description}</p>
+            </div>
+          </div>
+        ) : null}
       </div>
     </React.Fragment>
   );

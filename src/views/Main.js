@@ -3,6 +3,7 @@ import React from "react";
 import Header from "components/Header";
 import Sidebar from "components/SideBar";
 import FeedUpload from "components/FeedUpload";
+import FeedView from "components/FeedView";
 
 function Main() {
   return (
@@ -11,6 +12,7 @@ function Main() {
       <Sidebar />
       <div className="main">
         <FeedUpload />
+        <FeedView />
       </div>
     </React.Fragment>
   );
